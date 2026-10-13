@@ -1,7 +1,125 @@
-import {Link} from '@tanstack/react-router';
-import {useState} from 'react';
-import {ArrowLeft,ArrowRight,Minus,Plus,Check,Clock,BookOpen} from 'lucide-react';
-import {Button} from '@/components/ui/button';
-import {useReading} from './store';
-import {PageHeading,ProgressBar,StoryCard,EmptyState} from './shared';
-export function StoryPage({id}:{id:string}){const {stories,completed,setCompleted}=useReading();const story=stories.find(s=>s.id===id&&s.status==='Հրապարակված');const [size,setSize]=useState(20);const [page,setPage]=useState(0);if(!story)return <EmptyState text="Այս պատմությունը հասանելի չէ։"/>;const chunks=Array.from({length:Math.ceil(story.content.length/2)},(_,i)=>story.content.slice(i*2,i*2+2));const chunk=chunks[page]||[];const done=completed.includes(id);return <div className="container-width page-content"><Link to="/library" className="back-link"><ArrowLeft size={16}/>Գրադարան</Link><div className="story-detail-header"><div><PageHeading eyebrow={`${story.minutes} րոպե · 3–4 դասարան`} title={story.title} description={story.description}/><p className="text-muted-foreground">{story.author}</p><span className="demo-label mt-4">Ուսումնական ցուցադրական տարբերակ</span></div><img src={story.image} alt={story.title} width={1024} height={768}/></div><div className="reader"><div className="reader-toolbar"><span><BookOpen size={17}/>Էջ {page+1} / {chunks.length}</span><div className="flex items-center gap-2"><Button size="icon" variant="ghost" aria-label="Փոքրացնել տառերը" disabled={size<=16} onClick={()=>setSize(s=>s-2)}><Minus/></Button><span>Աա</span><Button size="icon" variant="ghost" aria-label="Մեծացնել տառերը" disabled={size>=30} onClick={()=>setSize(s=>s+2)}><Plus/></Button></div></div><ProgressBar value={(page+1)/chunks.length*100}/><div className="reading-text" style={{fontSize:`${size}px`}}>{chunk.map((p,i)=><p key={`${page}-${i}`}>{p}</p>)}</div><div className="reader-navigation"><Button variant="outline" disabled={page===0} onClick={()=>setPage(p=>p-1)}><ArrowLeft/>Նախորդ էջը</Button>{page<chunks.length-1?<Button onClick={()=>setPage(p=>p+1)}>Հաջորդ էջը<ArrowRight/></Button>:<Button onClick={()=>setCompleted(old=>old.includes(id)?old:[...old,id])} disabled={done}>{done?<><Check/>Կարդացել եմ</>:<><Check/>Ավարտել ընթերցանությունը</>}</Button>}</div></div><div className="quiz-invite"><div><h2>Պատրա՞ստ ես փոքրիկ մարտահրավերի</h2><p>Հիշենք պատմությունը և կիսվենք մեր մտքերով։</p></div><Button asChild size="lg"><Link to="/quiz/$id" params={{id}}>Անցնել հարցերին<ArrowRight/></Link></Button></div><section className="home-section"><h2 className="mb-7">Քո հաջորդ պատմությունը</h2><div className="story-grid">{stories.filter(s=>s.id!==id&&s.status==='Հրապարակված').slice(0,3).map(s=><StoryCard story={s} key={s.id}/>)}</div></section></div>}
+import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { ArrowLeft, ArrowRight, Minus, Plus, Check, Clock, BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useReading } from "./store";
+import { PageHeading, ProgressBar, StoryCard, EmptyState } from "./shared";
+export function StoryPage({ id }: { id: string }) {
+  const { stories, completed, setCompleted } = useReading();
+  const story = stories.find((s) => s.id === id && s.status === "Հրապարակված");
+  const [size, setSize] = useState(20);
+  const [page, setPage] = useState(0);
+  if (!story) return <EmptyState text="Այս պատմությունը հասանելի չէ։" />;
+  const chunks = Array.from({ length: Math.ceil(story.content.length / 2) }, (_, i) =>
+    story.content.slice(i * 2, i * 2 + 2),
+  );
+  const chunk = chunks[page] || [];
+  const done = completed.includes(id);
+  return (
+    <div className="container-width page-content">
+      <Link to="/library" className="back-link">
+        <ArrowLeft size={16} />
+        Գրադարան
+      </Link>
+      <div className="story-detail-header">
+        <div>
+          <PageHeading
+            eyebrow={`${story.minutes} րոպե · 3–4 դասարան`}
+            title={story.title}
+            description={story.description}
+          />
+          <p className="text-muted-foreground">{story.author}</p>
+          <span className="demo-label mt-4">Ուսումնական ցուցադրական տարբերակ</span>
+        </div>
+        <img src={story.image} alt={story.title} width={1024} height={768} />
+      </div>
+      <div className="reader">
+        <div className="reader-toolbar">
+          <span>
+            <BookOpen size={17} />
+            Էջ {page + 1} / {chunks.length}
+          </span>
+          <div className="flex items-center gap-2">
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="Փոքրացնել տառերը"
+              disabled={size <= 16}
+              onClick={() => setSize((s) => s - 2)}
+            >
+              <Minus />
+            </Button>
+            <span>Աա</span>
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="Մեծացնել տառերը"
+              disabled={size >= 30}
+              onClick={() => setSize((s) => s + 2)}
+            >
+              <Plus />
+            </Button>
+          </div>
+        </div>
+        <ProgressBar value={((page + 1) / chunks.length) * 100} />
+        <div className="reading-text" style={{ fontSize: `${size}px` }}>
+          {chunk.map((p, i) => (
+            <p key={`${page}-${i}`}>{p}</p>
+          ))}
+        </div>
+        <div className="reader-navigation">
+          <Button variant="outline" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
+            <ArrowLeft />
+            Նախորդ էջը
+          </Button>
+          {page < chunks.length - 1 ? (
+            <Button onClick={() => setPage((p) => p + 1)}>
+              Հաջորդ էջը
+              <ArrowRight />
+            </Button>
+          ) : (
+            <Button
+              onClick={() => setCompleted((old) => (old.includes(id) ? old : [...old, id]))}
+              disabled={done}
+            >
+              {done ? (
+                <>
+                  <Check />
+                  Կարդացել եմ
+                </>
+              ) : (
+                <>
+                  <Check />
+                  Ավարտել ընթերցանությունը
+                </>
+              )}
+            </Button>
+          )}
+        </div>
+      </div>
+      <div className="quiz-invite">
+        <div>
+          <h2>Պատրա՞ստ ես փոքրիկ մարտահրավերի</h2>
+          <p>Հիշենք պատմությունը և կիսվենք մեր մտքերով։</p>
+        </div>
+        <Button asChild size="lg">
+          <Link to="/quiz/$id" params={{ id }}>
+            Անցնել հարցերին
+            <ArrowRight />
+          </Link>
+        </Button>
+      </div>
+      <section className="home-section">
+        <h2 className="mb-7">Քո հաջորդ պատմությունը</h2>
+        <div className="story-grid">
+          {stories
+            .filter((s) => s.id !== id && s.status === "Հրապարակված")
+            .slice(0, 3)
+            .map((s) => (
+              <StoryCard story={s} key={s.id} />
+            ))}
+        </div>
+      </section>
+    </div>
+  );
+}

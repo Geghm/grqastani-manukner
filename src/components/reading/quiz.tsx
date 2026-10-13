@@ -1,14 +1,242 @@
-import {useState} from 'react';
-import {Link} from '@tanstack/react-router';
-import {ArrowLeft,ArrowRight,ArrowUp,ArrowDown,Check,Trophy,RotateCcw} from 'lucide-react';
-import {Button} from '@/components/ui/button';
-import {Textarea} from '@/components/ui/textarea';
-import {useReading} from './store';
-import {gradeQuiz,kindLabels,type Question} from './data';
-import {PageHeading,ProgressBar,EmptyState} from './shared';
-export function QuestionControl({question,value,onChange}:{question:Question;value:string;onChange:(v:string)=>void}){
- if(question.kind==='written')return <Textarea aria-label="Քո պատասխանը" placeholder="Գրիր քո մտքերը այստեղ…" rows={6} value={value} onChange={e=>onChange(e.target.value)}/>;
- if(question.kind==='order'){const items=value?value.split('|'):[...question.options].reverse();const move=(i:number,d:number)=>{const next=[...items];const target=i+d;if(target<0||target>=next.length)return;const current=next[i];const other=next[target];if(current===undefined||other===undefined)return;next[i]=other;next[target]=current;onChange(next.join('|'));};return <div className="space-y-3">{items.map((option,i)=><div className="order-answer" key={option}><span className="answer-letter">{i+1}</span><span>{option}</span><div className="flex"><Button variant="ghost" size="icon" aria-label={`Վեր բարձրացնել ${i+1}-րդ դեպքը`} disabled={i===0} onClick={()=>move(i,-1)}><ArrowUp/></Button><Button variant="ghost" size="icon" aria-label={`Իջեցնել ${i+1}-րդ դեպքը`} disabled={i===items.length-1} onClick={()=>move(i,1)}><ArrowDown/></Button></div></div>)}<Button variant="outline" onClick={()=>onChange(items.join('|'))}><Check/>Հաստատել հերթականությունը</Button></div>}
- return <div className="answer-options">{question.kind==='image'&&question.image&&<img className="question-image" src={question.image} alt="Պատմության հերոսը" width={1024} height={768}/>}<div role="radiogroup" aria-label="Պատասխանի տարբերակներ">{question.options.map((o,i)=><Button role="radio" aria-checked={value===o} key={o} variant="outline" className={value===o?'answer-option selected':'answer-option'} onClick={()=>onChange(o)}><span className="answer-letter">{['Ա','Բ','Գ','Դ'][i]||i+1}</span><span>{o}</span>{value===o&&<Check size={19}/>}</Button>)}</div></div>
+import { useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Check, Trophy, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useReading } from "./store";
+import { gradeQuiz, kindLabels, type Question } from "./data";
+import { PageHeading, ProgressBar, EmptyState } from "./shared";
+export function QuestionControl({
+  question,
+  value,
+  onChange,
+}: {
+  question: Question;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  if (question.kind === "written")
+    return (
+      <Textarea
+        aria-label="Քո պատասխանը"
+        placeholder="Գրիր քո մտքերը այստեղ…"
+        rows={6}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    );
+  if (question.kind === "order") {
+    const items = value ? value.split("|") : [...question.options].reverse();
+    const move = (i: number, d: number) => {
+      const next = [...items];
+      const target = i + d;
+      if (target < 0 || target >= next.length) return;
+      const current = next[i];
+      const other = next[target];
+      if (current === undefined || other === undefined) return;
+      next[i] = other;
+      next[target] = current;
+      onChange(next.join("|"));
+    };
+    return (
+      <div className="space-y-3">
+        {items.map((option, i) => (
+          <div className="order-answer" key={option}>
+            <span className="answer-letter">{i + 1}</span>
+            <span>{option}</span>
+            <div className="flex">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`Վեր բարձրացնել ${i + 1}-րդ դեպքը`}
+                disabled={i === 0}
+                onClick={() => move(i, -1)}
+              >
+                <ArrowUp />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`Իջեցնել ${i + 1}-րդ դեպքը`}
+                disabled={i === items.length - 1}
+                onClick={() => move(i, 1)}
+              >
+                <ArrowDown />
+              </Button>
+            </div>
+          </div>
+        ))}
+        <Button variant="outline" onClick={() => onChange(items.join("|"))}>
+          <Check />
+          Հաստատել հերթականությունը
+        </Button>
+      </div>
+    );
+  }
+  return (
+    <div className="answer-options">
+      {question.kind === "image" && question.image && (
+        <img
+          className="question-image"
+          src={question.image}
+          alt="Պատմության հերոսը"
+          width={1024}
+          height={768}
+        />
+      )}
+      <div role="radiogroup" aria-label="Պատասխանի տարբերակներ">
+        {question.options.map((o, i) => (
+          <Button
+            role="radio"
+            aria-checked={value === o}
+            key={o}
+            variant="outline"
+            className={value === o ? "answer-option selected" : "answer-option"}
+            onClick={() => onChange(o)}
+          >
+            <span className="answer-letter">{["Ա", "Բ", "Գ", "Դ"][i] || i + 1}</span>
+            <span>{o}</span>
+            {value === o && <Check size={19} />}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
 }
-export function QuizPage({id}:{id:string}){const {stories,questions:allQuestions,setSubmissions,student}=useReading();const questions=allQuestions.filter(q=>q.storyId===id);const story=stories.find(s=>s.id===id);const [index,setIndex]=useState(0);const [answers,setAnswers]=useState<Record<string,string>>({});const [finished,setFinished]=useState(false);const question=questions[index];if(!story||!question)return <EmptyState text="Այս պատմության հարցերը դեռ պատրաստ չեն։"/>;const result=gradeQuiz(questions,answers);const submit=()=>{setFinished(true);setSubmissions(old=>[...old,{id:crypto.randomUUID(),storyId:id,name:student.name?`${student.name} ${student.surname}`:'Հյուր ընթերցող',className:student.className,answers,earned:result.earned,total:result.total,date:new Date().toISOString()}]);};return <div className="container-width page-content quiz-page"><Link to="/story/$id" params={{id}} className="back-link"><ArrowLeft size={16}/>Վերադառնալ պատմությանը</Link>{finished?<div className="quiz-result"><span className="result-trophy"><Trophy size={55}/></span><span className="eyebrow">Դու իսկական ընթերցասեր ես</span><h1>Ապրե՛ս, հրաշալի աշխատանք էր։</h1><p>«{story.title}»</p><div className="score-number">{result.earned}<span> / {result.total}</span></div><p>Միավորներ՝ ինքնաշխատ ստուգված հարցերից</p>{result.pending>0&&<p className="review-note">{result.pending} գրավոր պատասխան սպասում է ուսուցչի գնահատմանը։</p>}<div className="result-review">{questions.map(q=><div key={q.id}><strong>{q.title}</strong><p>{answers[q.id]?.split('|').join(' → ')||'Պատասխան չկա'}</p><span className={q.kind==='written'?'text-muted-foreground':answers[q.id]===q.correct?'text-primary':'text-destructive'}>{q.kind==='written'?'Ուսուցչի գնահատման համար':answers[q.id]===q.correct?'Ճիշտ պատասխան':'Ճիշտ պատասխանը՝ '+q.correct.split('|').join(' → ')}</span></div>)}</div><div className="flex gap-3 justify-center flex-wrap"><Button asChild><Link to="/student">Իմ հաջողությունները<ArrowRight/></Link></Button><Button variant="outline" onClick={()=>{setFinished(false);setAnswers({});setIndex(0)}}><RotateCcw/>Փորձել կրկին</Button></div></div>:<><PageHeading eyebrow="Կարդա, մտածիր, բացահայտիր" title="Պատմության փոքրիկ մարտահրավերը" description={story.title}/><div className="quiz-frame"><div className="flex justify-between text-sm text-muted-foreground mb-4"><span>Հարց {index+1} / {questions.length}</span><span>{kindLabels[question.kind]}</span></div><ProgressBar value={(index+1)/questions.length*100}/><h2 className="quiz-question">{question.title}</h2><QuestionControl question={question} value={answers[question.id]||''} onChange={v=>setAnswers(old=>({...old,[question.id]:v}))}/><div className="reader-navigation"><Button variant="outline" disabled={index===0} onClick={()=>setIndex(i=>i-1)}><ArrowLeft/>Նախորդը</Button><Button disabled={!answers[question.id]?.trim()} onClick={()=>index<questions.length-1?setIndex(i=>i+1):submit()}>{index===questions.length-1?'Ավարտել հարցաշարը':'Հաջորդ հարցը'}<ArrowRight/></Button></div></div></>}</div>}
+export function QuizPage({ id }: { id: string }) {
+  const { stories, questions: allQuestions, setSubmissions, student } = useReading();
+  const questions = allQuestions.filter((q) => q.storyId === id);
+  const story = stories.find((s) => s.id === id);
+  const [index, setIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [finished, setFinished] = useState(false);
+  const question = questions[index];
+  if (!story || !question) return <EmptyState text="Այս պատմության հարցերը դեռ պատրաստ չեն։" />;
+  const result = gradeQuiz(questions, answers);
+  const submit = () => {
+    setFinished(true);
+    setSubmissions((old) => [
+      ...old,
+      {
+        id: crypto.randomUUID(),
+        storyId: id,
+        name: student.name ? `${student.name} ${student.surname}` : "Հյուր ընթերցող",
+        className: student.className,
+        answers,
+        earned: result.earned,
+        total: result.total,
+        date: new Date().toISOString(),
+      },
+    ]);
+  };
+  return (
+    <div className="container-width page-content quiz-page">
+      <Link to="/story/$id" params={{ id }} className="back-link">
+        <ArrowLeft size={16} />
+        Վերադառնալ պատմությանը
+      </Link>
+      {finished ? (
+        <div className="quiz-result">
+          <span className="result-trophy">
+            <Trophy size={55} />
+          </span>
+          <span className="eyebrow">Դու իսկական ընթերցասեր ես</span>
+          <h1>Ապրե՛ս, հրաշալի աշխատանք էր։</h1>
+          <p>«{story.title}»</p>
+          <div className="score-number">
+            {result.earned}
+            <span> / {result.total}</span>
+          </div>
+          <p>Միավորներ՝ ինքնաշխատ ստուգված հարցերից</p>
+          {result.pending > 0 && (
+            <p className="review-note">
+              {result.pending} գրավոր պատասխան սպասում է ուսուցչի գնահատմանը։
+            </p>
+          )}
+          <div className="result-review">
+            {questions.map((q) => (
+              <div key={q.id}>
+                <strong>{q.title}</strong>
+                <p>{answers[q.id]?.split("|").join(" → ") || "Պատասխան չկա"}</p>
+                <span
+                  className={
+                    q.kind === "written"
+                      ? "text-muted-foreground"
+                      : answers[q.id] === q.correct
+                        ? "text-primary"
+                        : "text-destructive"
+                  }
+                >
+                  {q.kind === "written"
+                    ? "Ուսուցչի գնահատման համար"
+                    : answers[q.id] === q.correct
+                      ? "Ճիշտ պատասխան"
+                      : "Ճիշտ պատասխանը՝ " + q.correct.split("|").join(" → ")}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-3 justify-center flex-wrap">
+            <Button asChild>
+              <Link to="/student">
+                Իմ հաջողությունները
+                <ArrowRight />
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setFinished(false);
+                setAnswers({});
+                setIndex(0);
+              }}
+            >
+              <RotateCcw />
+              Փորձել կրկին
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <PageHeading
+            eyebrow="Կարդա, մտածիր, բացահայտիր"
+            title="Պատմության փոքրիկ մարտահրավերը"
+            description={story.title}
+          />
+          <div className="quiz-frame">
+            <div className="flex justify-between text-sm text-muted-foreground mb-4">
+              <span>
+                Հարց {index + 1} / {questions.length}
+              </span>
+              <span>{kindLabels[question.kind]}</span>
+            </div>
+            <ProgressBar value={((index + 1) / questions.length) * 100} />
+            <h2 className="quiz-question">{question.title}</h2>
+            <QuestionControl
+              question={question}
+              value={answers[question.id] || ""}
+              onChange={(v) => setAnswers((old) => ({ ...old, [question.id]: v }))}
+            />
+            <div className="reader-navigation">
+              <Button
+                variant="outline"
+                disabled={index === 0}
+                onClick={() => setIndex((i) => i - 1)}
+              >
+                <ArrowLeft />
+                Նախորդը
+              </Button>
+              <Button
+                disabled={!answers[question.id]?.trim()}
+                onClick={() => (index < questions.length - 1 ? setIndex((i) => i + 1) : submit())}
+              >
+                {index === questions.length - 1 ? "Ավարտել հարցաշարը" : "Հաջորդ հարցը"}
+                <ArrowRight />
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

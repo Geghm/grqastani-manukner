@@ -10,9 +10,9 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
-import { ReadingProvider } from '@/components/reading/store';
-import { SiteShell } from '@/components/reading/shared';
-import { useLocation } from '@tanstack/react-router';
+import { ReadingProvider } from "@/components/reading/store";
+import { SiteShell } from "@/components/reading/shared";
+import { useLocation } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -48,9 +48,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          Էջը չբացվեց
-        </h1>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">Էջը չբացվեց</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Փորձեք թարմացնել էջը կամ վերադառնալ գլխավոր էջ։
         </p>
@@ -83,17 +81,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Փոքրիկ ընթերցասերներ" },
       { name: "description", content: "Հայերեն ընթերցանության դպրոցական ակումբ" },
-      
+
       { property: "og:title", content: "Փոքրիկ ընթերցասերներ" },
       { property: "og:description", content: "Հայերեն ընթերցանության դպրոցական ակումբ" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800;900&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700;800;900&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
@@ -123,12 +123,20 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const admin = useLocation({select: location => location.pathname === "/admin"});
+  const admin = useLocation({ select: (location) => location.pathname === "/admin" });
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <ReadingProvider>{admin ? <Outlet /> : <SiteShell><Outlet /></SiteShell>}</ReadingProvider>
+      <ReadingProvider>
+        {admin ? (
+          <Outlet />
+        ) : (
+          <SiteShell>
+            <Outlet />
+          </SiteShell>
+        )}
+      </ReadingProvider>
     </QueryClientProvider>
   );
 }
