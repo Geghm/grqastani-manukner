@@ -10,33 +10,128 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CartoonsRouteImport } from './routes/cartoons'
+import { Route as LibraryRouteImport } from './routes/library'
+import { Route as StudentRouteImport } from './routes/student'
+import { Route as CategoriesIdRouteImport } from './routes/categories.$id'
+import { Route as QuizIdRouteImport } from './routes/quiz.$id'
+import { Route as StoryIdRouteImport } from './routes/story.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartoonsRoute = CartoonsRouteImport.update({
+  id: '/cartoons',
+  path: '/cartoons',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LibraryRoute = LibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentRoute = StudentRouteImport.update({
+  id: '/student',
+  path: '/student',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesIdRoute = CategoriesIdRouteImport.update({
+  id: '/categories/$id',
+  path: '/categories/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizIdRoute = QuizIdRouteImport.update({
+  id: '/quiz/$id',
+  path: '/quiz/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoryIdRoute = StoryIdRouteImport.update({
+  id: '/story/$id',
+  path: '/story/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/cartoons': typeof CartoonsRoute
+  '/library': typeof LibraryRoute
+  '/student': typeof StudentRoute
+  '/categories/$id': typeof CategoriesIdRoute
+  '/quiz/$id': typeof QuizIdRoute
+  '/story/$id': typeof StoryIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/cartoons': typeof CartoonsRoute
+  '/library': typeof LibraryRoute
+  '/student': typeof StudentRoute
+  '/categories/$id': typeof CategoriesIdRoute
+  '/quiz/$id': typeof QuizIdRoute
+  '/story/$id': typeof StoryIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/cartoons': typeof CartoonsRoute
+  '/library': typeof LibraryRoute
+  '/student': typeof StudentRoute
+  '/categories/$id': typeof CategoriesIdRoute
+  '/quiz/$id': typeof QuizIdRoute
+  '/story/$id': typeof StoryIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/cartoons'
+    | '/library'
+    | '/student'
+    | '/categories/$id'
+    | '/quiz/$id'
+    | '/story/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/cartoons'
+    | '/library'
+    | '/student'
+    | '/categories/$id'
+    | '/quiz/$id'
+    | '/story/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/cartoons'
+    | '/library'
+    | '/student'
+    | '/categories/$id'
+    | '/quiz/$id'
+    | '/story/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  CartoonsRoute: typeof CartoonsRoute
+  LibraryRoute: typeof LibraryRoute
+  StudentRoute: typeof StudentRoute
+  CategoriesIdRoute: typeof CategoriesIdRoute
+  QuizIdRoute: typeof QuizIdRoute
+  StoryIdRoute: typeof StoryIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +143,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cartoons': {
+      id: '/cartoons'
+      path: '/cartoons'
+      fullPath: '/cartoons'
+      preLoaderRoute: typeof CartoonsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/library': {
+      id: '/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student': {
+      id: '/student'
+      path: '/student'
+      fullPath: '/student'
+      preLoaderRoute: typeof StudentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories/$id': {
+      id: '/categories/$id'
+      path: '/categories/$id'
+      fullPath: '/categories/$id'
+      preLoaderRoute: typeof CategoriesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz/$id': {
+      id: '/quiz/$id'
+      path: '/quiz/$id'
+      fullPath: '/quiz/$id'
+      preLoaderRoute: typeof QuizIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/story/$id': {
+      id: '/story/$id'
+      path: '/story/$id'
+      fullPath: '/story/$id'
+      preLoaderRoute: typeof StoryIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  CartoonsRoute: CartoonsRoute,
+  LibraryRoute: LibraryRoute,
+  StudentRoute: StudentRoute,
+  CategoriesIdRoute: CategoriesIdRoute,
+  QuizIdRoute: QuizIdRoute,
+  StoryIdRoute: StoryIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
